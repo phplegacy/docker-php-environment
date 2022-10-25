@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  php:
+    container_name: 'php'
+    build:
+      dockerfile: ./.dev/docker/images/php-7.0/Dockerfile
+      context: ./
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    tty: true
+    ports:
+      - '8081:8081'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped
+    environment:
+      - 'TZ=UTC'
+      - 'COMPOSE_CONVERT_WINDOWS_PATHS=1'
+    volumes:
+      - './app/:/app/'
+    networks:
+      - network1
+
+  php-tools:
+    container_name: 'php-tools'
+    build:
+      dockerfile: ./.dev/docker/images/php-tools/Dockerfile
+      context: ./
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    tty: true
+    ports:
+      - '8081:8081'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped
+    environment:
+      - 'TZ=UTC'
+      - 'COMPOSE_CONVERT_WINDOWS_PATHS=1'
+    volumes:
+      - './app/:/app/'
+    networks:
+      - network1
+
+networks:
+  network1:
+    driver: bridge
